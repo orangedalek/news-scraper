@@ -2,3 +2,14 @@
 	<h1>EHRMERGERD, DA NOOZ!!!</h1>
 	<p>Click a headline to save or comment on a story</p>
 </div>
+{{#each articles}}
+	<div class = "form-group articles-area">
+		<a href="{{this.link}}" target="blank" class="form-control">{{this.title}}</a>
+		<span class="input-group-btn">
+			<form action="/saved/{{this.id}}" method="POST">
+				<button type="submit" class="btn btn-primary save">SAVE</button>
+			</form>
+		</span>
+	</div>
+<hr>
+{{/each}}

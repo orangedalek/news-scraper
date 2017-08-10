@@ -3,6 +3,7 @@ var express = require("express");
 var bodyParser = require("body-parser");
 var logger = require("morgan");
 var mongoose = require("mongoose");
+var exphbs = require("express-handlebars");
 // require models
 var Note = require("./models/Note.js");
 var Article = require("./models/Article.js");
@@ -20,7 +21,7 @@ app.use(bodyParser.urlencoded({
 // make the public directory static
 app.use(express.static("public"));
 // configure database
-mongoose.connect("mongodb://localhost/scraping-mongoose");
+mongoose.connect("mongodb://localhost/scrape-mongoose");
 var db = mongoose.connection;
 // alert if there are any mongoose errors
 db.on("error", function(error) {
@@ -30,6 +31,9 @@ db.on("error", function(error) {
 db.once("open", function() {
   console.log("Mongoose connection successful.");
 });
+//make handlebars work
+app.engine("handlebars", exphbs({ defaultLayout: "main" }));
+app.set("view engine", "handlebars");
 
 
 //*********************************ROUTE TIME!!!!************************************************************
@@ -39,12 +43,12 @@ app.get("/", function(req, res){
 	res.redirect("/scrape");
 });
 
-// Scrape Clickhole
+// Scrape echojs to start, Clickhole if I can figure out how to use it instead
 app.get("/scrape", function(req, res) {
 
-	request("http://www.clickhole.com/", function(error, response, html){
+	request("http://www.echojs.com/", function(error, response, html){
 		var $ = cheerio.load(html);
-		$("article").each(function(i, element){
+		$("article h2").each(function(i, element){
 			var result = {};
 			result.title = $(this).children("a").text();
       		result.link = $(this).children("a").attr("href");
@@ -68,7 +72,7 @@ app.get("/articles", function(req, res) {
     if (error) {
       console.log(error);
     }else {
-      res.json(doc);
+      res.render("index", {index: doc});
     }
   });
 });
@@ -81,7 +85,7 @@ app.get("/articles/:id", function(req, res) {
     if (error) {
       console.log(error);
     }else {
-    	res.json(doc);
+    	res.render(doc);
     }
   });
 });
@@ -104,6 +108,24 @@ app.post("/articles/:id", function(req, res) {
     }
   });
 });
+
+//save an article
+app.post("/saved/:id", function(req, res){
+  Article.update({"_id": req.params.id}, {$set: {"saved": true}});
+    res.redirect("/articles");
+})
+
+
+//see saved articles
+app.get("/saved", function(req, res){
+  Article.find({"saved": true}, function(err, doc){
+    if(err){
+      console.log(err);
+    }else {
+      res.json(doc);
+    }
+  })
+})
 
 
 

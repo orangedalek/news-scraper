@@ -1,0 +1,21 @@
+{
+  "name": "news-scraper",
+  "version": "1.0.0",
+  "description": "MongoDB, Node and Cheerio news scraper",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/orangedalek/news-scraper.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/orangedalek/news-scraper/issues"
+  },
+  "homepage": "https://github.com/orangedalek/news-scraper#readme"
+}
