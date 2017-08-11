@@ -1,6 +1,7 @@
 // Require packages
 var express = require("express");
 var bodyParser = require("body-parser");
+var path = require("path");
 var logger = require("morgan");
 var mongoose = require("mongoose");
 var exphbs = require("express-handlebars");
@@ -21,7 +22,7 @@ app.use(bodyParser.urlencoded({
 // make the public directory static
 app.use(express.static("public"));
 // configure database
-mongoose.connect("mongodb://localhost/scrape-mongoose");
+mongoose.connect("mongodb://localhost/news-scrape");
 var db = mongoose.connection;
 // alert if there are any mongoose errors
 db.on("error", function(error) {
@@ -40,7 +41,8 @@ app.set("view engine", "handlebars");
 
 //make the root redirect to the scrape route so users don't have to click a button to load news
 app.get("/", function(req, res){
-	res.redirect("/scrape");
+	// res.redirect("/scrape");
+     res.render("index");
 });
 
 // Scrape echojs to start, Clickhole if I can figure out how to use it instead
@@ -50,20 +52,22 @@ app.get("/scrape", function(req, res) {
 		var $ = cheerio.load(html);
 		$("article h2").each(function(i, element){
 			var result = {};
-			result.title = $(this).children("a").text();
-      		result.link = $(this).children("a").attr("href");
+			var title = result.title = $(this).children("a").text();
+      var link = result.link = $(this).children("a").attr("href");
       		var entry = new Article(result);
       		entry.save(function(err, doc){
       			if(err){
       				console.log(error);
       			}else{
       				console.log(doc);
-      			}
-      		});
+            }
+          });
 
-		});
-	});
-		res.send("Scrape Complete");
+    });
+  });
+  res.redirect("/")
+ 
+		// res.send("Scrape Complete");
 });
 
 //get scraped articles
@@ -72,7 +76,8 @@ app.get("/articles", function(req, res) {
     if (error) {
       console.log(error);
     }else {
-      res.render("index", {index: doc});
+      console.log("banana");
+      res.render("index", {title: doc.title, link: doc.link});
     }
   });
 });
@@ -85,7 +90,7 @@ app.get("/articles/:id", function(req, res) {
     if (error) {
       console.log(error);
     }else {
-    	res.render(doc);
+    	res.render(index);
     }
   });
 });

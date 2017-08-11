@@ -1,15 +1,18 @@
-<div class="jumbotron">
-	<h1>EHRMERGERD, DA NOOZ!!!</h1>
-	<p>Click a headline to save or comment on a story</p>
-</div>
+<p>Hello</p>
+<div class="row">
+	<div class = "col-md-12">
 {{#each articles}}
-	<div class = "form-group articles-area">
-		<a href="{{this.link}}" target="blank" class="form-control">{{this.title}}</a>
-		<span class="input-group-btn">
-			<form action="/saved/{{this.id}}" method="POST">
+		<div class = "panel panel-default" id="articles-area">
+			<div class="panel-heading">
+				<h3>{{this.title}}<h3>
+				<form action="/{{this.id}}?_method=PUT" method="POST">
 				<button type="submit" class="btn btn-primary save">SAVE</button>
-			</form>
-		</span>
+				</form>
+			</div>
+			<div class="panel-body">
+				 {{this.link}}
+			</div>
+		</div>
 	</div>
-<hr>
+</div>
 {{/each}}
